@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificador de Fórmulas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Verificador de Fórmulas da Lógica Proposicional</h1>
+    <form method="POST">
+        <label for="sequencia">Digite uma sequência:</label><br>
+        <input type="text" name="sequencia" id="sequencia" required>
+        <button type="submit">Verificar</button>
+    </form>
+
+    {% if resultado is not none %}
+        {% if resultado %}
+            <p style="color:green;">✅ É uma fórmula válida!</p>
+        {% else %}
+            <p style="color:red;">❌ Não é uma fórmula válida!</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

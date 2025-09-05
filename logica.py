@@ -11,6 +11,7 @@ class AnalisadorLogico():
         self.formula = formula
         self.erros = []
 
+    # FIXME: Ajusta depois a lógica do "bi-implica", que é pra ser <>, mas no código não está verificando e vai dar erro de detecção, dois conectivos seguidos
     def analisar_expressao(self):
         self.erros.clear()
 
@@ -72,10 +73,10 @@ class AnalisadorLogico():
     
 
 
-a = AnalisadorLogico("(P^Q))")
-if a.analisar_expressao():
-    print("✅ Fórmula válida")
-else:
-    print("❌ Erros encontrados:")
-    for erro in a.erros:
-        print("-", erro)
+# a = AnalisadorLogico("(P^Q))")
+# if a.analisar_expressao():
+#     print("✅ Fórmula válida")
+# else:
+#     print("❌ Erros encontrados:")
+#     for erro in a.erros:
+#         print("-", erro)
