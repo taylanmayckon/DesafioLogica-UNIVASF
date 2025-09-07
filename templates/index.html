@@ -18,6 +18,12 @@
             <p style="color:green;">✅ É uma fórmula válida!</p>
         {% else %}
             <p style="color:red;">❌ Não é uma fórmula válida!</p>
+            <p style="color:rgb(0, 0, 0);">Erros encontrados:</p>
+            <ul style="color:rgb(0, 0, 0);">
+                {% for erro in erros %}
+                    <li>{{ erro }}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
     {% endif %}
 </body>
