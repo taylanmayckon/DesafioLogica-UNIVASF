@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Verificador de Fórmulas da Lógica Proposicional</h1>
+    <!-- <h1>Verificador de Fórmulas da Lógica Proposicional</h1> -->
     <form method="POST">
         <label for="sequencia">Digite uma sequência:</label><br>
         <input type="text" name="sequencia" id="sequencia" required>
@@ -14,6 +14,7 @@
     </form>
 
     {% if resultado is not none %}
+        <p style="color: black;">Fórmula analisada: {{formula_traduzida}}</p>
         {% if resultado %}
             <p style="color:green;">✅ É uma fórmula válida!</p>
         {% else %}

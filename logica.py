@@ -6,12 +6,18 @@ class AnalisadorLogico():
                  "}": "{"}
     LOGICOS = "FV" 
     ALFABETO =  set(VARIAVEIS) | set(CONECTIVOS) | set(PONTUACAO.keys()) | set(PONTUACAO.values()) |  set(LOGICOS)
+    
+    CORRESPONDENTE_ORIGINAL = {"~": "¬", 
+                               "^": "∧",
+                               "<>": "↔",
+                               ">": "→"}
 
     def __init__(self, formula: str):
         self.formula = formula
         self.erros = []
 
     # FIXME: Ajusta depois a lógica do "bi-implica", que é pra ser <>, mas no código não está verificando e vai dar erro de detecção, dois conectivos seguidos
+    # FIXME: Conectivo "not (~)" tá sendo processado errado, tem que ter um tratamento exclusivo
     def analisar_expressao(self):
         self.erros.clear()
 
@@ -71,9 +77,18 @@ class AnalisadorLogico():
 
         return len(self.erros) == 0
     
+    def traduz_expressao(self):
+        # Traduz para os símbolos utilizados na lógica proposicional
+        self.formula_traduzida = self.formula
+        for key, value in self.CORRESPONDENTE_ORIGINAL.items():
+            self.formula_traduzida = self.formula_traduzida.replace(key, value)
+    
 
 
+# Para teste por fora da interface Web
 # a = AnalisadorLogico("(P^Q))")
+# a.traduz_expressao()
+# print(f"Formula analisada: {a.formula_traduzida}")
 # if a.analisar_expressao():
 #     print("✅ Fórmula válida")
 # else:
