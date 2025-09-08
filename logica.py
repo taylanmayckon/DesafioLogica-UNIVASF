@@ -16,8 +16,6 @@ class AnalisadorLogico():
         self.formula = formula
         self.erros = []
 
-    # FIXME: Ajusta depois a lógica do "bi-implica", que é pra ser <>, mas no código não está verificando e vai dar erro de detecção, dois conectivos seguidos
-    # FIXME: Conectivo "not (~)" tá sendo processado errado, tem que ter um tratamento exclusivo
     def analisar_expressao(self):
         self.erros.clear()
 
@@ -42,13 +40,21 @@ class AnalisadorLogico():
 
             # Verificando se tem conectivo "solto"
             elif c in self.CONECTIVOS:
-                if i == 0: # Abertura da fórmula
-                    self.erros.append(f"Conectivo '{c}' no início da fórmula, o que não é permitido.")
-                elif self.formula[i-1] in self.CONECTIVOS: # Sequencia de conectivos
-                    if not (self.formula[i-1] == "<" and self.formula[i] == ">"): # Identificando o bi-implica
-                        self.erros.append(f"Dois conectivos seguidos nas posições {i} e {i-1}")
-                elif (i+1 < len(self.formula)) and self.formula[i+1] in self.PONTUACAO.keys(): # Quando vem antes de fechamento de brackets
-                    self.erros.append(f"Conectivo '{c}' na posição {i} não forma sub-expressão válida.")
+                if c == "~":
+                    if i == 0:
+                        continue
+                    elif self.formula[i-1] in self.CONECTIVOS or self.formula[i-1] in self.PONTUACAO.values():
+                        continue
+                    else:
+                        self.erros.append(f"Negaçao '~' na posição {i} está em posição inválida.")
+                else:
+                    if i == 0: # Abertura da fórmula
+                        self.erros.append(f"Conectivo '{c}' no início da fórmula, o que não é permitido.")
+                    elif self.formula[i-1] in self.CONECTIVOS: # Sequencia de conectivos
+                        if not (self.formula[i-1] in "<" and self.formula[i] == ">"): # Identificando o bi-implica
+                            self.erros.append(f"Dois conectivos seguidos nas posições {i} e {i-1}")
+                    elif (i+1 < len(self.formula)) and self.formula[i+1] in self.PONTUACAO.keys(): # Quando vem antes de fechamento de brackets
+                        self.erros.append(f"Conectivo '{c}' na posição {i} não forma sub-expressão válida.")
 
             # Verificando posicionamento de variáveis 
             elif c in self.VARIAVEIS:
