@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <!-- Verificador de formulas -->
     <div class="container">
         <h1>Verificador de Fórmulas</h1>
         
@@ -37,6 +38,26 @@
                 {% endif %}
             </div>
         {% endif %}
+    </div>
+
+    <!-- Alfabeto utilizado -->
+    <div class="container alfabeto-container">
+    <h2>Alfabeto Utilizado</h2>
+    
+    <p><strong>Variáveis:</strong> Todas as letras maiúsculas, exceto 'V' e 'F'.</p>
+    
+    <p><strong>Conectivos Lógicos:</strong></p>
+    <ul>
+        <li><code>~</code> (Negação)</li>
+        <li><code>^</code> (Conjunção)</li>
+        <li><code>v</code> (Disjunção)</li>
+        <li><code>></code> (Implicação)</li>
+        <li><code><></code> (Bi-implicação)</li>
+    </ul>
+
+    <p><strong>Valores Lógicos:</strong> <code>V</code> (Verdadeiro), <code>F</code> (Falso).</p>
+    
+    <p><strong>Pontuação:</strong> <code>( )</code>, <code>[ ]</code>, <code>{ }</code>.</p>
     </div>
 </body>
 </html>
