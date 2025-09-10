@@ -2,30 +2,41 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificador de Fórmulas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- <h1>Verificador de Fórmulas da Lógica Proposicional</h1> -->
-    <form method="POST">
-        <label for="sequencia">Digite uma sequência:</label><br>
-        <input type="text" name="sequencia" id="sequencia" required>
-        <button type="submit">Verificar</button>
-    </form>
+    <div class="container">
+        <h1>Verificador de Fórmulas</h1>
+        
+        <form method="POST">
+            <label for="sequencia">Digite uma fórmula:</label>
+            <input type="text" name="sequencia" id="sequencia" required autocomplete="off">
+            <button type="submit">Verificar</button>
+        </form>
 
-    {% if resultado is not none %}
-        <p style="color: black;">Fórmula analisada: {{formula_traduzida}}</p>
-        {% if resultado %}
-            <p style="color:green;">✅ É uma fórmula válida!</p>
-        {% else %}
-            <p style="color:red;">❌ Não é uma fórmula válida!</p>
-            <p style="color:rgb(0, 0, 0);">Erros encontrados:</p>
-            <ul style="color:rgb(0, 0, 0);">
-                {% for erro in erros %}
-                    <li>{{ erro }}</li>
-                {% endfor %}
-            </ul>
+        {% if resultado is not none %}
+            <div class="resultado-container">
+                <p class="formula-analisada"><strong>Fórmula analisada:</strong> {{formula_traduzida}}</p>
+                {% if resultado %}
+                    <p class="resultado valido">✅ É uma fórmula válida!</p>
+                {% else %}
+                    <p class="resultado invalido">❌ Não é uma fórmula válida!</p>
+                    <div class="erros-box">
+                        <p><strong>Erros encontrados:</strong></p>
+                        <ul>
+                            {% for erro in erros %}
+                                <li>{{ erro }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
         {% endif %}
-    {% endif %}
+    </div>
 </body>
 </html>

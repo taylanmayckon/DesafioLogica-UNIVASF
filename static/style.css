@@ -1,11 +1,126 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-}
-h1 {
+    font-family: 'Inter', sans-serif; 
+    background-color: #f0f2f5; 
     color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center; 
+    align-items: flex-start; 
+    min-height: 100vh;
 }
-input, button {
-    padding: 8px;
+
+.container {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 10px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    max-width: 500px;
+    width: 100%;
+    text-align: center; 
+}
+
+
+h1 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column; 
+}
+
+label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+input[type="text"] {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, box-shadow 0.3s; 
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+button {
+    padding: 12px;
+    background-color: #3498db; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9; 
+}
+
+
+.resultado-container {
+    margin-top: 30px;
+    text-align: left; 
+    padding-top: 20px;
+    border-top: 1px solid #eee; 
+}
+
+.formula-analisada {
+    color: #555;
+    word-wrap: break-word; 
+}
+
+.resultado {
+    padding: 12px;
+    border-radius: 6px;
     margin-top: 10px;
+    font-weight: 500;
+}
+
+.valido {
+    background-color: #e8f5e9; 
+    color: #2e7d32;
+}
+
+.invalido {
+    background-color: #ffebee; 
+    color: #c62828; 
+}
+
+.erros-box {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+}
+
+.erros-box p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.erros-box ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.erros-box li {
+    margin-bottom: 5px;
+    color: #555;
 }
