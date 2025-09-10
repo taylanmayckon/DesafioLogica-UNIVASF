@@ -15,6 +15,7 @@ class AnalisadorLogico():
     def __init__(self, formula: str):
         self.formula = formula
         self.erros = []
+        self.resultado = None
 
     def analisar_expressao(self):
         self.erros.clear()
@@ -82,7 +83,10 @@ class AnalisadorLogico():
         for abertura, pos in pilha:
             self.erros.append(f"Bracket '{c}' na posição {i} sem fechamento.")
 
-        return len(self.erros) == 0
+        if not len(self.erros):
+            self.resultado = True
+        else:
+            self.resultado = False
     
     def traduz_expressao(self):
         # Traduz para os símbolos utilizados na lógica proposicional

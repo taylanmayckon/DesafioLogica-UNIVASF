@@ -19,17 +19,17 @@
             <button type="submit">Verificar</button>
         </form>
 
-        {% if resultado is not none %}
+        {% if analisador is not none %}
             <div class="resultado-container">
-                <p class="formula-analisada"><strong>Fórmula analisada:</strong> {{formula_traduzida}}</p>
-                {% if resultado %}
+                <p class="formula-analisada"><strong>Fórmula analisada:</strong> {{analisador.formula_traduzida}}</p>
+                {% if analisador.resultado %}
                     <p class="resultado valido">✅ É uma fórmula válida!</p>
                 {% else %}
                     <p class="resultado invalido">❌ Não é uma fórmula válida!</p>
                     <div class="erros-box">
                         <p><strong>Erros encontrados:</strong></p>
                         <ul>
-                            {% for erro in erros %}
+                            {% for erro in analisador.erros %}
                                 <li>{{ erro }}</li>
                             {% endfor %}
                         </ul>
