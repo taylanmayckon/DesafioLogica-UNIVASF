@@ -1,3 +1,15 @@
+class Node:
+    def __init__(self, info):
+        info = self.info
+        left = None
+        right = None
+
+
+class ExpressionBinaryTree:
+    def __init__(self):
+        self.root = None
+        
+
 class AnalisadorLogico():
     VARIAVEIS = "ABCDEGHIJKLMNOPQRSTUWXYZ"
     CONECTIVOS = "^v~><"
@@ -16,6 +28,8 @@ class AnalisadorLogico():
         self.formula = formula
         self.erros = []
         self.resultado = None
+        self.formula_traduzida = None
+        self.formula_polonesa = None
 
     def analisar_expressao(self):
         self.erros.clear()
@@ -93,16 +107,60 @@ class AnalisadorLogico():
         self.formula_traduzida = self.formula
         for key, value in self.CORRESPONDENTE_ORIGINAL.items():
             self.formula_traduzida = self.formula_traduzida.replace(key, value)
+
+    def converte_notacao_polonesa(self):
+        # Converte a expressão para a notação polonesa
+        precedencia = {
+            '¬': 4,  # Negação
+            '∧': 3,  # Conjunção (E)
+            'v': 2,  # Disjunção (OU)
+            '→': 1,  # Implicação
+            '↔': 0   # Bicondicional
+        }
+        operadores = set(precedencia.keys())
+
+        pilha_operadores = []
+        fila_saida = []
+
+        # O algoritmo de Shunting Yard precisa que inverta a expressão para converter para Notação Polonesa
+        expressao_invertida = self.formula_traduzida[::-1]
+
+        for char in expressao_invertida:
+            if char in self.VARIAVEIS:
+                fila_saida.append(char)
+            
+            elif char in operadores:
+                while(pilha_operadores and pilha_operadores[-1] in operadores and precedencia[pilha_operadores[-1]] > precedencia[char]):
+                    fila_saida.append(pilha_operadores.pop())
+                pilha_operadores.append(char)
+            
+            elif char == ')':
+                pilha_operadores.append(char)
+
+            elif char == '(':
+                while pilha_operadores and pilha_operadores[-1] != ')':
+                    fila_saida.append(pilha_operadores.pop())
+
+                    if pilha_operadores:
+                        pilha_operadores.pop()
+        
+        while pilha_operadores:
+            fila_saida.append(pilha_operadores.pop())
+        
+        self.formula_polonesa = "".join(fila_saida[::-1])
+    
     
 
-
 # Para teste por fora da interface Web
-# a = AnalisadorLogico("(P^Q))")
-# a.traduz_expressao()
-# print(f"Formula analisada: {a.formula_traduzida}")
-# if a.analisar_expressao():
-#     print("✅ Fórmula válida")
-# else:
-#     print("❌ Erros encontrados:")
-#     for erro in a.erros:
-#         print("-", erro)
+a = AnalisadorLogico("((PvQ)>R)<>P")
+a.analisar_expressao()
+if a.resultado:
+    print("✅ Fórmula válida")
+    a.traduz_expressao()
+    print(f"Formula analisada: {a.formula_traduzida}")
+    a.converte_notacao_polonesa()
+    print(f"Notação polonesa: {a.formula_polonesa}")
+else:
+    print("❌ Erros encontrados:")
+    for erro in a.erros:
+        print("-", erro)
