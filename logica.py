@@ -1,13 +1,57 @@
 class Node:
+    """
+    Classe para geração dos nós da Expression Binary Tree.
+    """
     def __init__(self, info):
-        info = self.info
-        left = None
-        right = None
+        self.info = info
+        self.left = None
+        self.right = None
 
 
 class ExpressionBinaryTree:
-    def __init__(self):
-        self.root = None
+    """
+    Referência para a raiz da ExpressionBinaryTree e métodos para manipulação.
+    """
+    CONECTIVOS = ['¬', '∧', 'v', '→', '↔']
+
+    def __init__(self, expression_list):
+        self.expression = expression_list # Expressão em notaçao polonesa
+        self.index = [0] # "Ponteiro" para a posição atual na lista
+        self.root = self.build_tree_recursive()
+
+    def is_operator(self, token):
+        # Para verificar se é um conectivo lógico
+        return token in self.CONECTIVOS
+
+    def build_tree_recursive(self):
+        # Pega o token atual e avança o ponteiro
+        token = self.expression[self.index[0]]
+        self.index[0] += 1
+
+        # Cria um novo nó para o token
+        node = Node(token)
+
+        if self.is_operator(token):
+            # Adiciona o ramo esquerdo e só depois o direito
+            node.left = self.build_tree_recursive()
+            node.right = self.build_tree_recursive()
+        
+        return node 
+    
+    def debug_binary_tree(self, node=None):
+        if node is None:
+            node = self.root
+        result = []
+
+        result.append(node.info)
+
+        if node.left:
+            result.extend(self.debug_binary_tree(node.left))
+        if node.right:
+            result.extend(self.debug_binary_tree(node.right))
+
+        return result
+
         
 
 class AnalisadorLogico():
@@ -28,8 +72,8 @@ class AnalisadorLogico():
         self.formula = formula
         self.erros = []
         self.resultado = None
-        self.formula_traduzida = None
-        self.formula_polonesa = None
+        self.formula_traduzida = ""
+        self.formula_polonesa = ""
 
     def analisar_expressao(self):
         self.erros.clear()
@@ -152,15 +196,23 @@ class AnalisadorLogico():
     
 
 # Para teste por fora da interface Web
+# Cria a Classe referente a expressao logica
 a = AnalisadorLogico("((PvQ)>R)<>P")
 a.analisar_expressao()
+# Verifica se é expressão lógica
 if a.resultado:
+    # Se for, converte para notaçao polonesa
     print("✅ Fórmula válida")
     a.traduz_expressao()
     print(f"Formula analisada: {a.formula_traduzida}")
     a.converte_notacao_polonesa()
     print(f"Notação polonesa: {a.formula_polonesa}")
+    # Aloca a notaçao polonesa na Expression Binary Tree
+    binary_tree = ExpressionBinaryTree(a.formula_polonesa)
+    # print(f"[DEBUG] Binary Tree na notaçao polonesa: {binary_tree.debug_binary_tree()}") # Verificando se corresponde a expressao original
+    
 else:
+    # Se nao for interrompe execuçao e mostra os erros encontrados
     print("❌ Erros encontrados:")
     for erro in a.erros:
         print("-", erro)
