@@ -1,3 +1,138 @@
+import itertools
+
+class Node:
+    """
+    Classe para geração dos nós da Expression Binary Tree.
+    """
+    def __init__(self, info):
+        self.info = info
+        self.left = None
+        self.right = None
+
+
+
+class ExpressionBinaryTree:
+    """
+    Árvore binária para representar e avaliar expressões lógicas.
+    """
+    CONECTIVOS = ['¬', '∧', 'v', '→', '↔']
+
+    def __init__(self, expression_list):
+        self.expression = expression_list # Expressão em notaçao polonesa
+        self.index = [0] # "Ponteiro" para a posição atual na lista
+        self.root = self.build_tree_recursive() # Constroi a arvore
+
+    # CONSTRUÇAO DA ÁRVORE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    def is_operator(self, token):
+        """
+        Verifica se um token é conectivo lógico.
+        """
+        return token in self.CONECTIVOS
+
+    def build_tree_recursive(self):
+        """
+        Constrói recursivamente a árvore a partir da expressão em notação polonesa.
+        """
+        token = self.expression[self.index[0]]
+        self.index[0] += 1
+        node = Node(token)
+        if self.is_operator(token):
+            if token == '¬':  # unário
+                node.left = self.build_tree_recursive()
+            else:             # binário
+                node.left = self.build_tree_recursive()
+                node.right = self.build_tree_recursive()
+        return node
+    
+    def debug_binary_tree(self, node=None):
+        """
+        Retorna os nós da árvore ena notaçao polonesa (para depuração).
+        """
+        if node is None:
+            node = self.root
+        result = []
+
+        result.append(node.info)
+
+        if node.left:
+            result.extend(self.debug_binary_tree(node.left))
+        if node.right:
+            result.extend(self.debug_binary_tree(node.right))
+
+        return result
+    
+    # AVALIAÇAO DAS EXPRESSÕES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    def evaluate(self, node, values):
+        """
+        Avalia recursivamente uma subárvore dado um dicionário de valores.
+        """
+        if not node:
+            return None
+        if node.info not in self.CONECTIVOS:
+            if node.info == "V":  # Verdadeiro
+                return True
+            elif node.info == "F":  # Falso
+                return False
+            return values[node.info]
+        if node.info == '¬':
+            return not self.evaluate(node.left, values)
+        elif node.info == '∧':
+            return self.evaluate(node.left, values) and self.evaluate(node.right, values)
+        elif node.info == 'v':
+            return self.evaluate(node.left, values) or self.evaluate(node.right, values)
+        elif node.info == '→':
+            return (not self.evaluate(node.left, values)) or self.evaluate(node.right, values)
+        elif node.info == '↔':
+            return self.evaluate(node.left, values) == self.evaluate(node.right, values)
+
+    def to_string(self, node):
+        """
+        Converte uma subárvore em string representando a subexpressão.
+        """
+        if not node:
+            return ""
+        if node.info not in self.CONECTIVOS:
+            return node.info
+        if node.info == '¬':
+            return f"(¬{self.to_string(node.left)})"
+        else:
+            left_str = self.to_string(node.left)
+            right_str = self.to_string(node.right)
+            return f"({left_str} {node.info} {right_str})"
+        
+    # AVALIAÇAO DAS EXPRESSÕES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    def coletar_subexpressoes(self, node):
+        """
+        Retorna lista de subexpressões em ordem (da mais simples à completa).
+        """
+        if not node:
+            return []
+        
+        subexpressoes = []
+        if node.left:
+            subexpressoes.extend(self.coletar_subexpressoes(node.left))
+        if node.right:
+            subexpressoes.extend(self.coletar_subexpressoes(node.right))
+        
+        subexpressoes.append(self.to_string(node))  # o nó atual por último
+        return subexpressoes
+
+    def mapear_subexpressoes(self, node, mapa):
+        """
+        Preenche um dicionário {subexpressao: node}
+        """
+        if not node:
+            return
+        if node.left:
+            self.mapear_subexpressoes(node.left, mapa)
+        if node.right:
+            self.mapear_subexpressoes(node.right, mapa)
+        mapa[self.to_string(node)] = node
+    
+
+
+
+
 class AnalisadorLogico():
     VARIAVEIS = "ABCDEGHIJKLMNOPQRSTUWXYZ"
     CONECTIVOS = "^v~><"
@@ -16,8 +151,17 @@ class AnalisadorLogico():
         self.formula = formula
         self.erros = []
         self.resultado = None
+        self.formula_traduzida = ""
+        self.formula_polonesa = ""
+        self.binary_tree = None
+        self.tabela_verdade = {}
 
+    # ANÁLISE E CONVERSÕES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     def analisar_expressao(self):
+        """
+        Analisa se é uma expressão lógica válida
+        """
+
         self.erros.clear()
 
         # Pilha para paranteses, colchetes e chaves
@@ -89,20 +233,104 @@ class AnalisadorLogico():
             self.resultado = False
     
     def traduz_expressao(self):
-        # Traduz para os símbolos utilizados na lógica proposicional
+        """
+        Traduz para os símbolos utilizados na lógica proposicional
+        """
         self.formula_traduzida = self.formula
         for key, value in self.CORRESPONDENTE_ORIGINAL.items():
             self.formula_traduzida = self.formula_traduzida.replace(key, value)
+
+    def converte_notacao_polonesa(self):
+        """
+        Converte a expressão para a notação polonesa
+        """
+        precedencia = {
+            '¬': 4,  # Negação
+            '∧': 3,  # Conjunção (E)
+            'v': 2,  # Disjunção (OU)
+            '→': 1,  # Implicação
+            '↔': 0   # Bicondicional
+        }
+        operadores = set(precedencia.keys())
+
+        pilha_operadores = []
+        fila_saida = []
+
+        # O algoritmo de Shunting Yard precisa que inverta a expressão para converter para Notação Polonesa
+        expressao_invertida = self.formula_traduzida[::-1]
+
+        for char in expressao_invertida:
+            if char in self.VARIAVEIS or char in self.LOGICOS:
+                fila_saida.append(char)
+            
+            elif char in operadores:
+                while(pilha_operadores and pilha_operadores[-1] in operadores and precedencia[pilha_operadores[-1]] > precedencia[char]):
+                    fila_saida.append(pilha_operadores.pop())
+                pilha_operadores.append(char)
+            
+            elif char == ')':
+                pilha_operadores.append(char)
+
+            elif char == '(':
+                while pilha_operadores and pilha_operadores[-1] != ')':
+                    fila_saida.append(pilha_operadores.pop())
+
+                    if pilha_operadores:
+                        pilha_operadores.pop()
+        
+        while pilha_operadores:
+            fila_saida.append(pilha_operadores.pop())
+        
+        self.formula_polonesa = "".join(fila_saida[::-1])
+        self.binary_tree = ExpressionBinaryTree(self.formula_polonesa)
+    
+    # TABELA VERDADE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    def gerar_tabela_verdade(self) -> list:
+        """Gera a tabela verdade com valores de todas as subexpressões."""
+        variaveis = sorted(set(c for c in self.formula_traduzida if c in self.VARIAVEIS))
+        combinacoes = list(itertools.product([False, True], repeat=len(variaveis)))
+
+        subexpressoes = self.binary_tree.coletar_subexpressoes(self.binary_tree.root)
+        mapa = {}
+        self.binary_tree.mapear_subexpressoes(self.binary_tree.root, mapa)
+
+        tabela = []
+        for comb in combinacoes:
+            valores = dict(zip(variaveis, comb))
+            linha = dict(valores)
+            for expr in subexpressoes:
+                linha[expr] = self.binary_tree.evaluate(mapa[expr], valores)
+            tabela.append(linha)
+
+        self.tabela_verdade = tabela
+
+
     
 
 
 # Para teste por fora da interface Web
-# a = AnalisadorLogico("(P^Q))")
-# a.traduz_expressao()
-# print(f"Formula analisada: {a.formula_traduzida}")
-# if a.analisar_expressao():
+# Cria a Classe referente a expressao logica
+# a = AnalisadorLogico("((PvQ)>R)<>P")
+# a = AnalisadorLogico("Pv~R>Q^~R")
+# a = AnalisadorLogico("P>Q")
+# a.analisar_expressao()
+# # Verifica se é expressão lógica
+# if a.resultado:
+#     # Se for, converte para notaçao polonesa
 #     print("✅ Fórmula válida")
+#     a.traduz_expressao()
+#     print(f"Formula analisada: {a.formula_traduzida}")
+#     a.converte_notacao_polonesa()
+#     print(f"Notação polonesa: {a.formula_polonesa}")
+#     # Aloca a notaçao polonesa na Expression Binary Tree
+#     print(f"[DEBUG] Conteudo da Binary Tree: {a.binary_tree.debug_binary_tree()}")
+#     # Print da tabela verdade
+#     a.gerar_tabela_verdade()
+#     for linha in a.tabela_verdade:
+#         print(linha)
+    
 # else:
+#     # Se nao for interrompe execuçao e mostra os erros encontrados
 #     print("❌ Erros encontrados:")
 #     for erro in a.erros:
 #         print("-", erro)

@@ -12,7 +12,10 @@ def index():
         entrada = request.form.get("sequencia", "")
         analisador = AnalisadorLogico(entrada)
         analisador.analisar_expressao()
-        analisador.traduz_expressao()
+        if analisador.resultado:
+            analisador.traduz_expressao()
+            analisador.converte_notacao_polonesa()
+            analisador.gerar_tabela_verdade()
 
     return render_template("index.html", analisador=analisador, alfabeto=AnalisadorLogico)
 
