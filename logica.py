@@ -259,7 +259,7 @@ class AnalisadorLogico():
         expressao_invertida = self.formula_traduzida[::-1]
 
         for char in expressao_invertida:
-            if char in self.VARIAVEIS:
+            if char in self.VARIAVEIS or char in self.LOGICOS:
                 fila_saida.append(char)
             
             elif char in operadores:
@@ -310,7 +310,7 @@ class AnalisadorLogico():
 # Para teste por fora da interface Web
 # Cria a Classe referente a expressao logica
 # a = AnalisadorLogico("((PvQ)>R)<>P")
-a = AnalisadorLogico("P>Q")
+a = AnalisadorLogico("P>F")
 a.analisar_expressao()
 # Verifica se é expressão lógica
 if a.resultado:
