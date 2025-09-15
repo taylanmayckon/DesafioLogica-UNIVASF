@@ -154,6 +154,7 @@ class AnalisadorLogico():
         self.formula_traduzida = ""
         self.formula_polonesa = ""
         self.binary_tree = None
+        self.tabela_verdade = {}
 
     # ANÁLISE E CONVERSÕES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     def analisar_expressao(self):
@@ -301,7 +302,7 @@ class AnalisadorLogico():
                 linha[expr] = self.binary_tree.evaluate(mapa[expr], valores)
             tabela.append(linha)
 
-        return tabela
+        self.tabela_verdade = tabela
 
 
     
@@ -310,26 +311,26 @@ class AnalisadorLogico():
 # Para teste por fora da interface Web
 # Cria a Classe referente a expressao logica
 # a = AnalisadorLogico("((PvQ)>R)<>P")
-a = AnalisadorLogico("P>F")
-a.analisar_expressao()
-# Verifica se é expressão lógica
-if a.resultado:
-    # Se for, converte para notaçao polonesa
-    print("✅ Fórmula válida")
-    a.traduz_expressao()
-    print(f"Formula analisada: {a.formula_traduzida}")
-    a.converte_notacao_polonesa()
-    print(f"Notação polonesa: {a.formula_polonesa}")
-    # Aloca a notaçao polonesa na Expression Binary Tree
-    print(f"[DEBUG] Conteudo da Binary Tree: {a.binary_tree.debug_binary_tree()}")
-    # Print da tabela verdade
-    tabela = a.gerar_tabela_verdade()
-    for linha in tabela:
-        print(linha)
+# a = AnalisadorLogico("Pv~R>Q^~R")
+# a = AnalisadorLogico("P>Q")
+# a.analisar_expressao()
+# # Verifica se é expressão lógica
+# if a.resultado:
+#     # Se for, converte para notaçao polonesa
+#     print("✅ Fórmula válida")
+#     a.traduz_expressao()
+#     print(f"Formula analisada: {a.formula_traduzida}")
+#     a.converte_notacao_polonesa()
+#     print(f"Notação polonesa: {a.formula_polonesa}")
+#     # Aloca a notaçao polonesa na Expression Binary Tree
+#     print(f"[DEBUG] Conteudo da Binary Tree: {a.binary_tree.debug_binary_tree()}")
+#     # Print da tabela verdade
+#     a.gerar_tabela_verdade()
+#     for linha in a.tabela_verdade:
+#         print(linha)
     
-
-else:
-    # Se nao for interrompe execuçao e mostra os erros encontrados
-    print("❌ Erros encontrados:")
-    for erro in a.erros:
-        print("-", erro)
+# else:
+#     # Se nao for interrompe execuçao e mostra os erros encontrados
+#     print("❌ Erros encontrados:")
+#     for erro in a.erros:
+#         print("-", erro)

@@ -161,3 +161,67 @@ code {
 .alfabeto-container li {
     margin-bottom: 5px;
 }
+
+.tabela-verdade-container {
+    margin-top: 25px;
+    max-width: 800px; 
+    width: 100%;
+    padding: 20px;
+}
+
+.tabela-verdade-container h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; 
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+th, td {
+    border: 1px solid #dee2e6; 
+    padding: 10px 12px;
+    text-align: center; 
+}
+
+th {
+    background-color: #3498db; 
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.valor-logico {
+    font-family: monospace; 
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+
+.main-wrapper {
+    display: flex; 
+    flex-direction: row; 
+    align-items: flex-start; 
+    justify-content: center; 
+    gap: 25px; 
+    width: 100%;
+    padding: 0 20px; 
+    box-sizing: border-box;
+    max-width: 1200px; 
+}
+
+.main-wrapper .container {
+    flex: 1; 
+    margin-top: 0; 
+}
+
+.alfabeto-container {
+    margin-top: 0; 
+}
