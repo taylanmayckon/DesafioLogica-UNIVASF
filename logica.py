@@ -155,6 +155,7 @@ class AnalisadorLogico():
         self.formula_polonesa = ""
         self.binary_tree = None
         self.tabela_verdade = {}
+        self.propriedade_semantica = []
 
     # ANÁLISE E CONVERSÕES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     def analisar_expressao(self):
@@ -285,7 +286,7 @@ class AnalisadorLogico():
         self.binary_tree = ExpressionBinaryTree(self.formula_polonesa)
     
     # TABELA VERDADE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    def gerar_tabela_verdade(self) -> list:
+    def gerar_tabela_verdade(self):
         """Gera a tabela verdade com valores de todas as subexpressões."""
         variaveis = sorted(set(c for c in self.formula_traduzida if c in self.VARIAVEIS))
         combinacoes = list(itertools.product([False, True], repeat=len(variaveis)))
@@ -304,14 +305,41 @@ class AnalisadorLogico():
 
         self.tabela_verdade = tabela
 
+    def verifica_propriedade_semantica(self):
+        """
+        Verifica as propriedades semânticas:
+        1- Tautologia (Sempre verdadeira)
+        2- Satisfatível (Pelo menos uma atribuição verdadeira)
+        3- Contigência (Pelo menos uma atribuição verdadeira e uma falsa)
+        4- Contradição (Todas as atribuições são falsas)
+        """
+        chave_expressao = list(self.tabela_verdade[0].keys())[-1]
+        verdades = 0
+        falsos = 0
+
+        for linha in self.tabela_verdade:
+            if(linha[chave_expressao] == True):
+                verdades += 1
+            if(linha[chave_expressao] == False):
+                falsos += 1
+
+        if(verdades == len(self.tabela_verdade)):
+            self.propriedade_semantica.append("Tautologia")
+        if(verdades>0):
+            self.propriedade_semantica.append("Satisfatível")
+        if(verdades>0 and falsos>0):
+            self.propriedade_semantica.append("Contigência")
+        if(falsos == len(self.tabela_verdade)):
+            self.propriedade_semantica.append("Contradição")
+        print(self.propriedade_semantica)
 
     
 
 
 # Para teste por fora da interface Web
-# Cria a Classe referente a expressao logica
-# a = AnalisadorLogico("((PvQ)>R)<>P")
-# a = AnalisadorLogico("Pv~R>Q^~R")
+# # Cria a Classe referente a expressao logica
+# # a = AnalisadorLogico("((PvQ)>R)<>P")
+# # a = AnalisadorLogico("Pv~R>Q^~R")
 # a = AnalisadorLogico("P>Q")
 # a.analisar_expressao()
 # # Verifica se é expressão lógica
@@ -328,6 +356,8 @@ class AnalisadorLogico():
 #     a.gerar_tabela_verdade()
 #     for linha in a.tabela_verdade:
 #         print(linha)
+#     # Print da Propriedade Semântica
+#     a.verifica_propriedade_semantica()
     
 # else:
 #     # Se nao for interrompe execuçao e mostra os erros encontrados
