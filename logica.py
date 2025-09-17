@@ -341,6 +341,11 @@ class AnalisadorLogico():
 # # a = AnalisadorLogico("((PvQ)>R)<>P")
 # # a = AnalisadorLogico("Pv~R>Q^~R")
 # a = AnalisadorLogico("P>Q")
+# # Exemplos de propriedades semânticas
+# a = AnalisadorLogico("Av~A") # Tautologia
+# a = AnalisadorLogico("P^Q") # Satisfatível
+# a = AnalisadorLogico("A>B") # Contigência
+# a = AnalisadorLogico("A^~A") # Contradição
 # a.analisar_expressao()
 # # Verifica se é expressão lógica
 # if a.resultado:

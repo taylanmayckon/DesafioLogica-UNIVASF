@@ -22,6 +22,10 @@
                     <p class="formula-analisada"><strong>Fórmula analisada:</strong> {{analisador.formula_traduzida}}</p>
                     {% if analisador.resultado %}
                         <p class="resultado valido">✅ É uma fórmula válida!</p>
+                        <p><strong>Propriedades semânticas:</strong></p>
+                        {% for propriedade in analisador.propriedade_semantica %}
+                            <li>{{propriedade}}</li>
+                        {% endfor %}
                     {% else %}
                         <p class="resultado invalido">❌ Não é uma fórmula válida!</p>
                         <div class="erros-box">
