@@ -26,6 +26,10 @@
                         {% for propriedade in analisador.propriedade_semantica %}
                             <li>{{propriedade}}</li>
                         {% endfor %}
+                        <p><strong>FND:</strong></p>
+                        <li>{{analisador.fnd}}</li>
+                        <p><strong>FNC:</strong></p>
+                        <li>{{analisador.fnc}}</li>
                     {% else %}
                         <p class="resultado invalido">❌ Não é uma fórmula válida!</p>
                         <div class="erros-box">

@@ -17,6 +17,7 @@ def index():
             analisador.converte_notacao_polonesa()
             analisador.gerar_tabela_verdade()
             analisador.verifica_propriedade_semantica()
+            analisador.forma_normal()
 
     return render_template("index.html", analisador=analisador, alfabeto=AnalisadorLogico)
 
