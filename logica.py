@@ -156,6 +156,8 @@ class AnalisadorLogico():
         self.binary_tree = None
         self.tabela_verdade = {}
         self.propriedade_semantica = []
+        self.fnd = ""  
+        self.fnc = ""  
 
     # ANÁLISE E CONVERSÕES -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     def analisar_expressao(self):
@@ -333,19 +335,54 @@ class AnalisadorLogico():
             self.propriedade_semantica.append("Contradição")
         print(self.propriedade_semantica)
 
+    def forma_normal(self):
+        """
+        Gera a forma normal conjuntiva e disjuntiva da expressão.
+        Os resultados são armazenados em self.fnd e self.fnc
+        """
+        variaveis = sorted(set(c for c in self.formula_traduzida if c in self.VARIAVEIS))
+        termos_fnd = []
+        termos_fnc = []
+        expressao_chave = list(self.tabela_verdade[0].keys())[-1]
+
+        for linha in self.tabela_verdade:
+            # Para compor a FND (Linhas TRUE)
+            if linha[expressao_chave]:
+                conjuncao = []
+                for var in variaveis:
+                    if linha[var]:
+                        conjuncao.append(var)
+                    else:
+                        conjuncao.append(f"¬{var}")
+                termos_fnd.append(f"({' ∧ '.join(conjuncao)})")
+            
+            # Para compor a FNC (Linhas FALSE)
+            else:
+                disjuncao = []
+                for var in variaveis:
+                    if linha[var]:
+                        disjuncao.append(f"¬{var}")
+                    else:
+                        disjuncao.append(var)
+                termos_fnc.append(f"({' v '.join(disjuncao)})")
+            
+            self.fnd = " v ".join(termos_fnd) if termos_fnd else "Contradição"
+            self.fnc = " ∧ ".join(termos_fnc) if termos_fnc else "Tautologia"
+
+
     
 
 
 # Para teste por fora da interface Web
-# # Cria a Classe referente a expressao logica
-# # a = AnalisadorLogico("((PvQ)>R)<>P")
-# # a = AnalisadorLogico("Pv~R>Q^~R")
-# a = AnalisadorLogico("P>Q")
+# Cria a Classe referente a expressao logica
+# a = AnalisadorLogico("((PvQ)>R)<>P")
+# a = AnalisadorLogico("Pv~R>Q^~R")
+# # a = AnalisadorLogico("P>Q")
 # # Exemplos de propriedades semânticas
-# a = AnalisadorLogico("Av~A") # Tautologia
-# a = AnalisadorLogico("P^Q") # Satisfatível
-# a = AnalisadorLogico("A>B") # Contigência
-# a = AnalisadorLogico("A^~A") # Contradição
+# # a = AnalisadorLogico("Av~A") # Tautologia
+# # a = AnalisadorLogico("P^Q") # Satisfatível
+# # a = AnalisadorLogico("A>B") # Contigência
+# # a = AnalisadorLogico("A^~A") # Contradição
 # a.analisar_expressao()
 # # Verifica se é expressão lógica
 # if a.resultado:
@@ -363,6 +400,10 @@ class AnalisadorLogico():
 #         print(linha)
 #     # Print da Propriedade Semântica
 #     a.verifica_propriedade_semantica()
+#     # Forma normal
+#     a.forma_normal()
+#     print(f"Forma Normal Disjuntiva: {a.fnd}")
+#     print(f"Forma Normal Conjuntiva: {a.fnc}")
     
 # else:
 #     # Se nao for interrompe execuçao e mostra os erros encontrados
